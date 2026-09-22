@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DuoMath: Algebra Expansion & Factorisation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #f7f9fa;
+      --card-bg: #ffffff;
+      --text-main: #4b4b4b;
+      --text-muted: #777777;
+      --duo-green: #58cc02;
+      --duo-green-dark: #46a302;
+      --duo-blue: #1cb0f6;
+      --duo-blue-dark: #1899d6;
+      --duo-red: #ff4b4b;
+      --duo-red-dark: #ea2b2b;
+      --duo-gold: #ffc800;
+      --duo-gold-dark: #e5a400;
+      --duo-purple: #ce82ff;
+      --duo-purple-dark: #a855f7;
+      --border-color: #e5e5e5;
+      --shadow-color: rgba(0, 0, 0, 0.08);
+      --font-family: 'Nunito', system-ui, -apple-system, sans-serif;
+    }
+
+    [data-theme="cyber"] {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --shadow-color: rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="royal"] {
+      --bg-color: #2b1055;
+      --card-bg: #3c1e70;
+      --text-main: #ffffff;
+      --text-muted: #d8b4fe;
+      --border-color: #582a9e;
+      --shadow-color: rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Top Navigation Bar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--card-bg);
+      border-bottom: 2px solid var(--border-color);
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--duo-green);
+      cursor: pointer;
+    }
+
+    .logo-owl {
+      width: 42px;
+      height: 42px;
+    }
+
+    .stats-bar {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      font-size: 16px;
+      padding: 6px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,0.03);
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+
+    .stat-pill:hover {
+      transform: scale(1.05);
+    }
+
+    .streak-pill { color: #ff9600; }
+    .gem-pill { color: var(--duo-blue); }
+    .heart-pill { color: var(--duo-red); }
+    .xp-pill { color: var(--duo-gold-dark); }
+
+    .nav-btn {
+      background: none;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      padding: 8px 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    /* View Screens */
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Learning Path Map */
+    .path-header {
+      background: linear-gradient(135deg, var(--duo-green), #42a5f5);
+      border-radius: 20px;
+      padding: 24px;
+      color: white;
+      margin-bottom: 32px;
+      position: relative;
+      box-shadow: 0 6px 16px rgba(88, 204, 2, 0.25);
+    }
+
+    .path-header h1 {
+      font-size: 26px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .path-header p {
+      font-size: 15px;
+      opacity: 0.95;
+    }
+
+    .unit-path {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      position: relative;
+    }
+
+    .unit-node-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .unit-card {
+      background: var(--card-bg);
+      border: 3px solid var(--border-color);
+      border-radius: 24px;
+      padding: 20px 24px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 5px 0 var(--border-color);
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .unit-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--duo-blue);
+      box-shadow: 0 8px 0 var(--duo-blue-dark);
+    }
+
+    .unit-card.completed {
+      border-color: var(--duo-green);
+      box-shadow: 0 5px 0 var(--duo-green-dark);
+    }
+
+    .unit-badge-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #e8f5e9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      flex-shrink: 0;
+      border: 3px solid var(--duo-green);
+      position: relative;
+    }
+
+    .unit-card.completed .unit-badge-icon {
+      background: var(--duo-green);
+      color: white;
+    }
+
+    .unit-info {
+      flex: 1;
+    }
+
+    .unit-day {
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--duo-blue);
+      margin-bottom: 2px;
+    }
+
+    .unit-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .unit-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .unit-status {
+      font-size: 13px;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 12px;
+      background: #f1f3f4;
+      color: var(--text-muted);
+    }
+
+    .unit-card.completed .unit-status {
+      background: #d7ffb8;
+      color: #3a8a00;
+    }
+
+    /* Connector line between units */
+    .path-connector {
+      width: 6px;
+      height: 24px;
+      background: var(--border-color);
+      border-radius: 3px;
+      margin: -4px auto;
+    }
+
+    /* Practice Challenge Box */
+    .challenge-banner {
+      background: linear-gradient(135deg, #ff9800, #ff5722);
+      border-radius: 18px;
+      padding: 16px 20px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    /* Lesson Screen */
+    .lesson-container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .lesson-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .close-btn {
+      font-size: 24px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .progress-bar-container {
+      flex: 1;
+      height: 16px;
+      background: #e5e5e5;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--duo-green);
+      border-radius: 12px;
+      transition: width 0.3s ease;
+    }
+
+    .hearts-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--duo-red);
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    /* Mascot Speech & Prompt */
+    .question-box {
+      background: var(--card-bg);
+      border: 3px solid var(--border-color);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      box-shadow: 0 4px 12px var(--shadow-color);
+    }
+
+    .mascot-area {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .mascot-avatar {
+      width: 56px;
+      height: 56px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      background: #e8f5e9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 2px solid var(--duo-green);
+    }
+
+    .speech-bubble {
+      background: #f7f9fa;
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      position: relative;
+      flex: 1;
+    }
+
+    .pedagogical-tip {
+      background: #e1f5fe;
+      border-left: 4px solid var(--duo-blue);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #0277bd;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .expression-display {
+      font-size: 32px;
+      font-weight: 900;
+      text-align: center;
+      padding: 24px 12px;
+      margin: 12px 0 20px;
+      background: #f8fafc;
+      border-radius: 16px;
+      letter-spacing: 1px;
+      color: #1e293b;
+      border: 2px dashed #cbd5e1;
+    }
+
+    /* Options Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 520px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .option-btn {
+      background: var(--card-bg);
+      border: 2px solid var(--border-color);
+      border-bottom: 4px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px 14px;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text-main);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.1s;
+      outline: none;
+    }
+
+    .option-btn:hover {
+      background: #f8f9fa;
+      border-color: #cbd5e1;
+    }
+
+    .option-btn.selected {
+      border-color: var(--duo-blue);
+      border-bottom-color: var(--duo-blue-dark);
+      background: #e1f5fe;
+      color: var(--duo-blue-dark);
+    }
+
+    /* Lesson Action Footer */
+    .lesson-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      border-top: 2px solid var(--border-color);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 90;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .action-btn {
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 14px 32px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      transition: filter 0.1s, transform 0.1s;
+    }
+
+    .check-btn {
+      background: var(--duo-green);
+      color: white;
+      box-shadow: 0 4px 0 var(--duo-green-dark);
+    }
+
+    .check-btn:disabled {
+      background: #e5e5e5;
+      color: #afafaf;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .help-btn {
+      background: none;
+      border: 2px solid var(--border-color);
+      color: var(--text-muted);
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .help-btn:hover {
+      background: rgba(0,0,0,0.05);
+    }
+
+    /* Feedback Banner */
+    .feedback-banner {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 101;
+      max-width: 800px;
+      margin: 0 auto;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      animation: slideUp 0.2s ease-out;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .feedback-banner.correct {
+      background: #d7ffb8;
+      border-top: 4px solid var(--duo-green);
+      display: flex;
+    }
+
+    .feedback-banner.incorrect {
+      background: #ffdfe0;
+      border-top: 4px solid var(--duo-red);
+      display: flex;
+    }
+
+    .feedback-text h3 {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .feedback-banner.correct .feedback-text h3 {
+      color: #46a302;
+    }
+
+    .feedback-banner.incorrect .feedback-text h3 {
+      color: #ea2b2b;
+    }
+
+    .feedback-text p {
+      font-size: 14px;
+      color: #333333;
+    }
+
+    .continue-btn {
+      background: var(--duo-green);
+      color: white;
+      box-shadow: 0 4px 0 var(--duo-green-dark);
+    }
+
+    .feedback-banner.incorrect .continue-btn {
+      background: var(--duo-red);
+      box-shadow: 0 4px 0 var(--duo-red-dark);
+    }
+
+    /* Step-by-Step Explanation Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      border-radius: 24px;
+      width: 100%;
+      max-width: 580px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      position: relative;
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .modal-header h2 {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--duo-blue);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .step-item {
+      background: #f8fafc;
+      border-left: 4px solid var(--duo-blue);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 15px;
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .step-item:first-child {
+      border-left-color: var(--duo-purple);
+      background: #faf5ff;
+    }
+
+    .step-item:last-child {
+      border-left-color: var(--duo-green);
+      background: #f0fdf4;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .close-modal-btn {
+      width: 100%;
+      background: var(--duo-blue);
+      color: white;
+      box-shadow: 0 4px 0 var(--duo-blue-dark);
+      margin-top: 16px;
+    }
+
+    /* Reward Shop & Achievements Modal */
+    .shop-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 18px 0;
+    }
+
+    .shop-item {
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+      transition: transform 0.15s;
+    }
+
+    .shop-item:hover {
+      transform: translateY(-2px);
+      border-color: var(--duo-gold);
+    }
+
+    .shop-icon {
+      font-size: 38px;
+    }
+
+    .shop-title {
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .shop-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .buy-btn {
+      margin-top: auto;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 800;
+      border-radius: 12px;
+      border: none;
+      background: var(--duo-gold);
+      color: #5d4037;
+      box-shadow: 0 3px 0 var(--duo-gold-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .buy-btn:disabled {
+      background: #e5e5e5;
+      color: #999;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* Badges Display */
+    .badge-collection {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .badge-card {
+      border: 2px solid var(--border-color);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+      opacity: 0.4;
+      filter: grayscale(100%);
+      transition: all 0.3s;
+    }
+
+    .badge-card.unlocked {
+      opacity: 1;
+      filter: none;
+      border-color: var(--duo-gold);
+      background: #fffdf0;
+      box-shadow: 0 3px 8px rgba(255, 200, 0, 0.2);
+    }
+
+    .badge-emoji {
+      font-size: 32px;
+      margin-bottom: 4px;
+    }
+
+    .badge-name {
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* Certificate View */
+    .certificate-frame {
+      border: 8px double #d4af37;
+      background: #fffef9;
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      color: #2c3e50;
+      margin: 16px 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    .cert-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: #b8860b;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .cert-subtitle {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-bottom: 20px;
+    }
+
+    .cert-name {
+      font-size: 28px;
+      font-weight: 900;
+      color: #1a252f;
+      border-bottom: 2px solid #d4af37;
+      display: inline-block;
+      padding: 0 24px 6px;
+      margin-bottom: 16px;
+    }
+
+    .cert-body {
+      font-size: 15px;
+      line-height: 1.6;
+      max-width: 440px;
+      margin: 0 auto 20px;
+    }
+
+    .cert-stats {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      font-weight: 800;
+      margin-top: 14px;
+    }
+
+    /* Interactive Challenge Sandbox */
+    .sandbox-box {
+      background: #f8fafc;
+      border: 2px dashed #94a3b8;
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .sandbox-inputs {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 16px 0;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .sandbox-inputs input {
+      width: 60px;
+      padding: 8px;
+      font-size: 20px;
+      font-weight: 800;
+      text-align: center;
+      border: 2px solid var(--duo-blue);
+      border-radius: 10px;
+      font-family: inherit;
+    }
+
+    /* Confetti Canvas */
+    #confettiCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Custom Notification Toast */
+    .toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 800;
+      z-index: 300;
+      display: none;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      animation: fadeIn 0.2s;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Status Bar -->
+  <header>
+    <div class="logo-area" onclick="showScreen('pathScreen')">
+      <span style="font-size: 30px;">🦉</span>
+      <span>DuoMath</span>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-pill streak-pill" title="Daily Practice Streak">
+        <span>🔥</span>
+        <span id="streakCount">1</span>
+      </div>
+
+      <div class="stat-pill gem-pill" onclick="openShopModal()" title="Lingots / Gems">
+        <span>💎</span>
+        <span id="gemCount">50</span>
+      </div>
+
+      <div class="stat-pill heart-pill" title="Hearts / Lives">
+        <span>❤️</span>
+        <span id="heartCount">5</span>
+      </div>
+
+      <div class="stat-pill xp-pill" title="Experience Points">
+        <span>⚡</span>
+        <span id="xpCount">0</span>
+      </div>
+
+      <button class="nav-btn" onclick="toggleAudio()" id="audioToggleBtn" title="Sound Effects">
+        🔊
+      </button>
+
+      <button class="nav-btn" onclick="openShopModal()">
+        🛒 Shop
+      </button>
+
+      <button class="nav-btn" onclick="openCertificateModal()">
+        📜 Diploma
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Screen 1: Learning Path Map -->
+    <div id="pathScreen" class="screen active">
+      <div class="path-header">
+        <h1>Algebra Expansion & Factorisation</h1>
+        <p>Complete each day's step-by-step module to earn XP, maintain your streak, and unlock the master diploma!</p>
+      </div>
+
+      <div class="unit-path" id="unitPathContainer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Screen 2: Lesson Practice Interface -->
+    <div id="lessonScreen" class="screen">
+      <div class="lesson-container">
+        <div class="lesson-header">
+          <button class="close-btn" onclick="quitLesson()" title="Exit Lesson">✕</button>
+          <div class="progress-bar-container">
+            <div class="progress-fill" id="lessonProgressBar"></div>
+          </div>
+          <div class="hearts-indicator">
+            <span>❤️</span>
+            <span id="lessonHeartCount">5</span>
+          </div>
+        </div>
+
+        <div class="question-box">
+          <div class="mascot-area">
+            <div class="mascot-avatar" id="mascotReaction">🦉</div>
+            <div class="speech-bubble" id="mascotSpeech">
+              Let's solve this! Check each term carefully.
+            </div>
+          </div>
+
+          <div class="pedagogical-tip" id="pedagogicalTipBox" style="display: none;">
+            <span>💡</span>
+            <span id="pedagogicalTipText"></span>
+          </div>
+
+          <div style="font-weight: 800; font-size: 16px; color: var(--text-muted);" id="questionPrompt">
+            Expand the bracket:
+          </div>
+
+          <div class="expression-display" id="questionExpression">
+            2(x + 5)
+          </div>
+
+          <div class="options-grid" id="optionsGrid">
+            <!-- Option buttons injected here -->
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson-footer">
+        <button class="help-btn" onclick="showCurrentExplanation()">
+          💡 Show Steps
+        </button>
+        <button class="action-btn check-btn" id="checkBtn" onclick="checkSelectedAnswer()" disabled>
+          Check
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Feedback Banner -->
+  <div class="feedback-banner" id="feedbackBanner">
+    <div class="feedback-text">
+      <h3 id="feedbackTitle">Nicely done!</h3>
+      <p id="feedbackDesc">You nailed this expansion step.</p>
+    </div>
+    <div style="display: flex; gap: 12px;">
+      <button class="action-btn help-btn" id="feedbackHelpBtn" onclick="showCurrentExplanation()" style="display: none; background: white;">
+        💡 View Solution
+      </button>
+      <button class="action-btn continue-btn" id="continueBtn" onclick="nextQuestion()">
+        Continue
+      </button>
+    </div>
+  </div>
+
+  <!-- Step-by-Step Explanation Modal -->
+  <div class="modal-overlay" id="explanationModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>💡 Step-by-Step Solution</h2>
+        <button class="close-btn" onclick="closeExplanationModal()">✕</button>
+      </div>
+
+      <div style="font-size: 18px; font-weight: 800; margin-bottom: 12px; color: var(--text-main);">
+        Problem: <span id="modalProblemExpr" style="color: var(--duo-blue);"></span>
+      </div>
+
+      <div class="step-list" id="modalStepList">
+        <!-- Steps injected here -->
+      </div>
+
+      <button class="action-btn close-modal-btn" onclick="closeExplanationModal()">
+        Got it!
+      </button>
+    </div>
+  </div>
+
+  <!-- Reward Shop Modal -->
+  <div class="modal-overlay" id="shopModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🛒 Student Reward Shop</h2>
+        <button class="close-btn" onclick="closeShopModal()">✕</button>
+      </div>
+
+      <p style="font-size: 14px; color: var(--text-muted);">
+        Spend your hard-earned gems (Lingots) to refill hearts, unlock awesome theme styles, or power-up!
+      </p>
+
+      <div class="shop-grid">
+        <div class="shop-item">
+          <div class="shop-icon">❤️</div>
+          <div class="shop-title">Refill Hearts</div>
+          <div class="shop-desc">Restore all 5 hearts instantly.</div>
+          <button class="buy-btn" onclick="buyHeartRefill()">
+            💎 20 Gems
+          </button>
+        </div>
+
+        <div class="shop-item">
+          <div class="shop-icon">🛡️</div>
+          <div class="shop-title">Streak Freeze</div>
+          <div class="shop-desc">Protect your streak from breaking.</div>
+          <button class="buy-btn" id="streakFreezeBtn" onclick="buyStreakFreeze()">
+            💎 30 Gems
+          </button>
+        </div>
+
+        <div class="shop-item">
+          <div class="shop-icon">🕶️</div>
+          <div class="shop-title">Cool Shades Owl</div>
+          <div class="shop-desc">Gives your mascot cool sunglasses.</div>
+          <button class="buy-btn" id="mascotGlassesBtn" onclick="toggleMascotAccessory('glasses')">
+            💎 15 Gems
+          </button>
+        </div>
+
+        <div class="shop-item">
+          <div class="shop-icon">🌌</div>
+          <div class="shop-title">Cyber Theme</div>
+          <div class="shop-desc">Futuristic dark cyberpunk UI.</div>
+          <button class="buy-btn" id="cyberThemeBtn" onclick="toggleTheme('cyber')">
+            💎 25 Gems
+          </button>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 20px; font-size: 18px; font-weight: 800;">🏆 Your Achievement Badges</h3>
+      <div class="badge-collection" id="badgeContainer">
+        <!-- Badges rendered dynamically -->
+      </div>
+
+      <button class="action-btn close-modal-btn" onclick="closeShopModal()">
+        Back to Learning
+      </button>
+    </div>
+  </div>
+
+  <!-- Certificate Modal -->
+  <div class="modal-overlay" id="certModal">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <h2>📜 Certificate of Mastery</h2>
+        <button class="close-btn" onclick="closeCertModal()">✕</button>
+      </div>
+
+      <div style="margin-bottom: 12px;">
+        <label style="font-weight: 800; font-size: 14px;">Student Name:</label>
+        <input type="text" id="studentNameInput" value="Alex Smith" style="width: 100%; padding: 10px 14px; font-size: 16px; font-weight: 800; border-radius: 12px; border: 2px solid var(--border-color); margin-top: 4px;" oninput="updateCertName()" />
+      </div>
+
+      <div class="certificate-frame" id="printableCertificate">
+        <div style="font-size: 44px; margin-bottom: 6px;">🎓</div>
+        <div class="cert-title">Certificate of Achievement</div>
+        <div class="cert-subtitle">This officially certifies that</div>
+        <div class="cert-name" id="certStudentName">Alex Smith</div>
+        <div class="cert-body">
+          has demonstrated exceptional diligence, accuracy, and perseverance in mastering
+          <strong>Algebraic Expansion, Negative Multipliers, Double Brackets, Common Factor Factorisation, and Quadratic Trinomials</strong>.
+        </div>
+        <div class="cert-stats">
+          <div>⚡ Total XP: <span id="certXP">0</span></div>
+          <div>🔥 Streak: <span id="certStreak">1 Day</span></div>
+          <div>⭐ Modules: <span id="certCompleted">0/8</span></div>
+        </div>
+        <div style="margin-top: 20px; font-size: 12px; color: #999;">
+          Verified by DuoMath Automated Curriculum Verification
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px;">
+        <button class="action-btn check-btn" style="flex: 1;" onclick="window.print()">
+          🖨️ Print / Save PDF
+        </button>
+        <button class="action-btn help-btn" onclick="closeCertModal()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monday Challenge Creator Modal -->
+  <div class="modal-overlay" id="challengeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>✨ Monday Challenge: Build Your Own</h2>
+        <button class="close-btn" onclick="closeChallengeModal()">✕</button>
+      </div>
+
+      <p style="font-size: 14px; color: var(--text-muted);">
+        "Create two of your own examples and solve them." Pick any outside number and inside terms to test the expansion rule!
+      </p>
+
+      <div class="sandbox-box">
+        <div class="sandbox-inputs">
+          <input type="number" id="customK" value="5" />
+          <span>(</span>
+          <input type="number" id="customA" value="2" />
+          <span>x + </span>
+          <input type="number" id="customB" value="4" />
+          <span>)</span>
+        </div>
+
+        <button class="action-btn check-btn" style="width: 100%;" onclick="solveCustomExample()">
+          Expand Step-by-Step
+        </button>
+
+        <div id="customResultArea" style="margin-top: 16px; display: none;">
+          <div style="font-size: 20px; font-weight: 900; color: var(--duo-green); margin-bottom: 8px;" id="customExpandedExpr">
+            10x + 20
+          </div>
+          <div class="step-list" id="customStepList"></div>
+        </div>
+      </div>
+
+      <button class="action-btn close-modal-btn" onclick="closeChallengeModal()">
+        Done Practicing
+      </button>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast">Notice message here</div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <script>
+    // Embedded Curriculum Data
+    const CURRICULUM = [{"id": "mon", "day": "Monday", "title": "Understanding Expansion", "description": "Learn the distributive law: multiply the outside number by each term inside!", "tip": "Distributive Law: k(a + b) = k*a + k*b", "badge": "\ud83c\udfaf Bracket Beginner", "questions": [{"id": "mon_1", "prompt": "Expand the bracket:", "expression": "2(x + 5)", "options": ["2x + 10", "2x + 5", "2x + 7", "x + 10"], "correct": "2x + 10", "steps": ["Rule: Multiply the 2 outside by everything inside the brackets.", "Step 1: Multiply 2 by x \u2192 2 \u00d7 x = 2x", "Step 2: Multiply 2 by +5 \u2192 2 \u00d7 5 = +10", "Step 3: Combine the terms \u2192 2x + 10"]}, {"id": "mon_2", "prompt": "Expand the bracket:", "expression": "4(y + 3)", "options": ["4y + 12", "4y + 3", "4y + 7", "y + 12"], "correct": "4y + 12", "steps": ["Rule: Multiply 4 by each term inside (y and 3).", "Step 1: 4 \u00d7 y = 4y", "Step 2: 4 \u00d7 3 = +12", "Step 3: Combine terms \u2192 4y + 12"]}, {"id": "mon_3", "prompt": "Expand the bracket:", "expression": "7(a - 1)", "options": ["7a - 7", "7a - 1", "7a + 7", "a - 7"], "correct": "7a - 7", "steps": ["Rule: Pay attention to the minus sign inside!", "Step 1: 7 \u00d7 a = 7a", "Step 2: 7 \u00d7 (-1) = -7", "Step 3: Combine terms \u2192 7a - 7"]}, {"id": "mon_4", "prompt": "Expand the bracket:", "expression": "6(b + 2)", "options": ["6b + 12", "6b + 8", "6b + 2", "b + 12"], "correct": "6b + 12", "steps": ["Rule: Distribute 6 across (b + 2).", "Step 1: 6 \u00d7 b = 6b", "Step 2: 6 \u00d7 2 = +12", "Step 3: Combine terms \u2192 6b + 12"]}, {"id": "mon_5", "prompt": "Expand the bracket:", "expression": "3(x - 8)", "options": ["3x - 24", "3x - 8", "3x + 24", "3x - 11"], "correct": "3x - 24", "steps": ["Rule: Multiply 3 by x and then 3 by -8.", "Step 1: 3 \u00d7 x = 3x", "Step 2: 3 \u00d7 (-8) = -24", "Step 3: Combine terms \u2192 3x - 24"]}], "hasChallenge": true}, {"id": "tue", "day": "Tuesday", "title": "Expanding with Negatives", "description": "Master negative multipliers. Remember: negative \u00d7 negative = positive!", "tip": "Higher Tip: Always write the multiplication step before simplifying. (- \u00d7 - = +)", "badge": "\u2796 Negative Ninja", "questions": [{"id": "tue_1", "prompt": "Expand with negative multiplier:", "expression": "-4(x + 2)", "options": ["-4x - 8", "-4x + 8", "-4x + 2", "4x - 8"], "correct": "-4x - 8", "steps": ["Higher Tip: Write the multiplication step first!", "Step 1: (-4) \u00d7 x = -4x", "Step 2: (-4) \u00d7 (+2) = -8 (negative times positive is negative)", "Step 3: Result \u2192 -4x - 8"]}, {"id": "tue_2", "prompt": "Expand with negative multiplier:", "expression": "-5(y - 3)", "options": ["-5y + 15", "-5y - 15", "-5y - 3", "5y + 15"], "correct": "-5y + 15", "steps": ["Higher Tip: Watch the signs carefully!", "Step 1: (-5) \u00d7 y = -5y", "Step 2: (-5) \u00d7 (-3) = +15 (negative times negative is POSITIVE!)", "Step 3: Result \u2192 -5y + 15"]}, {"id": "tue_3", "prompt": "Expand with negative multiplier:", "expression": "-7(a + 1)", "options": ["-7a - 7", "-7a + 7", "-7a + 1", "7a - 7"], "correct": "-7a - 7", "steps": ["Step 1: (-7) \u00d7 a = -7a", "Step 2: (-7) \u00d7 (+1) = -7", "Step 3: Result \u2192 -7a - 7"]}, {"id": "tue_4", "prompt": "Expand with negative multiplier:", "expression": "-2(b - 9)", "options": ["-2b + 18", "-2b - 18", "-2b - 9", "2b + 18"], "correct": "-2b + 18", "steps": ["Step 1: (-2) \u00d7 b = -2b", "Step 2: (-2) \u00d7 (-9) = +18 (two negatives make a positive)", "Step 3: Result \u2192 -2b + 18"]}, {"id": "tue_5", "prompt": "Expand with negative multiplier:", "expression": "-6(x + 4)", "options": ["-6x - 24", "-6x + 24", "-6x + 4", "-6x - 10"], "correct": "-6x - 24", "steps": ["Step 1: (-6) \u00d7 x = -6x", "Step 2: (-6) \u00d7 (+4) = -24", "Step 3: Result \u2192 -6x - 24"]}]}, {"id": "wed", "day": "Wednesday", "title": "Double Brackets", "description": "Expand two binomials using FOIL (First, Outside, Inside, Last)!", "tip": "FOIL Method: (x + p)(x + q) = x\u00b2 + qx + px + pq = x\u00b2 + (p+q)x + pq", "badge": "\u2716\ufe0f FOIL Master", "questions": [{"id": "wed_1", "prompt": "Expand the double brackets:", "expression": "(x + 3)(x + 2)", "options": ["x\u00b2 + 5x + 6", "x\u00b2 + 6x + 5", "x\u00b2 + 5x + 5", "x\u00b2 + 6"], "correct": "x\u00b2 + 5x + 6", "steps": ["Use FOIL:", "First: x \u00d7 x = x\u00b2", "Outside: x \u00d7 2 = 2x", "Inside: 3 \u00d7 x = 3x", "Last: 3 \u00d7 2 = 6", "Combine like middle terms: 2x + 3x = 5x", "Final result: x\u00b2 + 5x + 6"]}, {"id": "wed_2", "prompt": "Expand the double brackets:", "expression": "(x + 4)(x + 1)", "options": ["x\u00b2 + 5x + 4", "x\u00b2 + 4x + 4", "x\u00b2 + 5x + 5", "x\u00b2 + 4"], "correct": "x\u00b2 + 5x + 4", "steps": ["FOIL breakdown:", "First: x \u00d7 x = x\u00b2", "Outside: x \u00d7 1 = 1x", "Inside: 4 \u00d7 x = 4x", "Last: 4 \u00d7 1 = 4", "Combine: 1x + 4x = 5x", "Final result: x\u00b2 + 5x + 4"]}, {"id": "wed_3", "prompt": "Expand the double brackets:", "expression": "(x + 5)(x + 6)", "options": ["x\u00b2 + 11x + 30", "x\u00b2 + 30x + 11", "x\u00b2 + 11x + 11", "x\u00b2 + 30"], "correct": "x\u00b2 + 11x + 30", "steps": ["FOIL breakdown:", "First: x \u00d7 x = x\u00b2", "Outside: x \u00d7 6 = 6x", "Inside: 5 \u00d7 x = 5x", "Last: 5 \u00d7 6 = 30", "Combine: 6x + 5x = 11x", "Final result: x\u00b2 + 11x + 30"]}, {"id": "wed_4", "prompt": "Expand the double brackets:", "expression": "(y + 2)(y + 7)", "options": ["y\u00b2 + 9y + 14", "y\u00b2 + 14y + 9", "y\u00b2 + 9y + 9", "y\u00b2 + 14"], "correct": "y\u00b2 + 9y + 14", "steps": ["FOIL with variable y:", "First: y \u00d7 y = y\u00b2", "Outside: y \u00d7 7 = 7y", "Inside: 2 \u00d7 y = 2y", "Last: 2 \u00d7 7 = 14", "Combine: 7y + 2y = 9y", "Final result: y\u00b2 + 9y + 14"]}, {"id": "wed_5", "prompt": "Expand the double brackets:", "expression": "(a + 3)(a + 4)", "options": ["a\u00b2 + 7a + 12", "a\u00b2 + 12a + 7", "a\u00b2 + 7a + 7", "a\u00b2 + 12"], "correct": "a\u00b2 + 7a + 12", "steps": ["FOIL with variable a:", "First: a \u00d7 a = a\u00b2", "Outside: a \u00d7 4 = 4a", "Inside: 3 \u00d7 a = 3a", "Last: 3 \u00d7 4 = 12", "Combine: 4a + 3a = 7a", "Final result: a\u00b2 + 7a + 12"]}]}, {"id": "thu", "day": "Thursday", "title": "Harder Double Brackets", "description": "Double brackets with negative numbers. Mind your signs!", "tip": "Exam Focus: Check each sign carefully before combining terms.", "badge": "\ud83d\udee1\ufe0f Sign Sentinel", "questions": [{"id": "thu_1", "prompt": "Expand the double brackets:", "expression": "(x - 2)(x + 3)", "options": ["x\u00b2 + x - 6", "x\u00b2 - x - 6", "x\u00b2 + 5x - 6", "x\u00b2 - 6"], "correct": "x\u00b2 + x - 6", "steps": ["FOIL with mixed signs:", "First: x \u00d7 x = x\u00b2", "Outside: x \u00d7 (+3) = +3x", "Inside: (-2) \u00d7 x = -2x", "Last: (-2) \u00d7 (+3) = -6", "Combine: +3x - 2x = +1x = +x", "Final result: x\u00b2 + x - 6"]}, {"id": "thu_2", "prompt": "Expand the double brackets:", "expression": "(x - 4)(x + 5)", "options": ["x\u00b2 + x - 20", "x\u00b2 - x - 20", "x\u00b2 + 9x - 20", "x\u00b2 - 20"], "correct": "x\u00b2 + x - 20", "steps": ["FOIL breakdown:", "First: x \u00d7 x = x\u00b2", "Outside: x \u00d7 (+5) = +5x", "Inside: (-4) \u00d7 x = -4x", "Last: (-4) \u00d7 (+5) = -20", "Combine: +5x - 4x = +x", "Final result: x\u00b2 + x - 20"]}, {"id": "thu_3", "prompt": "Expand the double brackets:", "expression": "(x - 3)(x - 6)", "options": ["x\u00b2 - 9x + 18", "x\u00b2 - 9x - 18", "x\u00b2 + 9x + 18", "x\u00b2 - 3x + 18"], "correct": "x\u00b2 - 9x + 18", "steps": ["Exam Focus: Both numbers are negative!", "First: x \u00d7 x = x\u00b2", "Outside: x \u00d7 (-6) = -6x", "Inside: (-3) \u00d7 x = -3x", "Last: (-3) \u00d7 (-6) = +18 (negative \u00d7 negative = positive!)", "Combine: -6x - 3x = -9x", "Final result: x\u00b2 - 9x + 18"]}, {"id": "thu_4", "prompt": "Expand the double brackets:", "expression": "(y - 2)(y + 8)", "options": ["y\u00b2 + 6y - 16", "y\u00b2 - 6y - 16", "y\u00b2 + 10y - 16", "y\u00b2 - 16"], "correct": "y\u00b2 + 6y - 16", "steps": ["FOIL with variable y:", "First: y \u00d7 y = y\u00b2", "Outside: y \u00d7 (+8) = +8y", "Inside: (-2) \u00d7 y = -2y", "Last: (-2) \u00d7 (+8) = -16", "Combine: +8y - 2y = +6y", "Final result: y\u00b2 + 6y - 16"]}, {"id": "thu_5", "prompt": "Expand the double brackets:", "expression": "(a - 7)(a - 1)", "options": ["a\u00b2 - 8a + 7", "a\u00b2 - 8a - 7", "a\u00b2 + 8a + 7", "a\u00b2 - 6a + 7"], "correct": "a\u00b2 - 8a + 7", "steps": ["Exam Focus: Two negative constants!", "First: a \u00d7 a = a\u00b2", "Outside: a \u00d7 (-1) = -1a", "Inside: (-7) \u00d7 a = -7a", "Last: (-7) \u00d7 (-1) = +7", "Combine: -1a - 7a = -8a", "Final result: a\u00b2 - 8a + 7"]}]}, {"id": "fri", "day": "Friday", "title": "Mixed Expansion Review", "description": "Consolidate everything from single brackets, negatives, and double brackets!", "tip": "Review: Single bracket k(x+c) vs. Double brackets (x+a)(x+b)", "badge": "\u2b50 Expansion All-Star", "questions": [{"id": "fri_1", "prompt": "Expand:", "expression": "5(x + 3)", "options": ["5x + 15", "5x + 3", "5x + 8", "x + 15"], "correct": "5x + 15", "steps": ["Single bracket expansion:", "5 \u00d7 x = 5x", "5 \u00d7 3 = 15", "Result: 5x + 15"]}, {"id": "fri_2", "prompt": "Expand:", "expression": "-4(x - 2)", "options": ["-4x + 8", "-4x - 8", "-4x - 2", "4x + 8"], "correct": "-4x + 8", "steps": ["Watch the signs:", "(-4) \u00d7 x = -4x", "(-4) \u00d7 (-2) = +8 (negative \u00d7 negative = positive)", "Result: -4x + 8"]}, {"id": "fri_3", "prompt": "Expand:", "expression": "(x + 2)(x + 6)", "options": ["x\u00b2 + 8x + 12", "x\u00b2 + 12x + 8", "x\u00b2 + 8x + 8", "x\u00b2 + 12"], "correct": "x\u00b2 + 8x + 12", "steps": ["Double bracket FOIL:", "x\u00b2 + 6x + 2x + 12", "Combine like terms: 6x + 2x = 8x", "Result: x\u00b2 + 8x + 12"]}, {"id": "fri_4", "prompt": "Expand:", "expression": "(x - 3)(x + 1)", "options": ["x\u00b2 - 2x - 3", "x\u00b2 + 2x - 3", "x\u00b2 - 4x - 3", "x\u00b2 - 3"], "correct": "x\u00b2 - 2x - 3", "steps": ["Double bracket FOIL:", "x\u00b2 + 1x - 3x - 3", "Combine: 1x - 3x = -2x", "Result: x\u00b2 - 2x - 3"]}, {"id": "fri_5", "prompt": "Expand:", "expression": "(x - 4)(x - 5)", "options": ["x\u00b2 - 9x + 20", "x\u00b2 - 9x - 20", "x\u00b2 + 9x + 20", "x\u00b2 - x + 20"], "correct": "x\u00b2 - 9x + 20", "steps": ["Double bracket with negatives:", "x\u00b2 - 5x - 4x + 20", "Combine: -5x - 4x = -9x", "Result: x\u00b2 - 9x + 20"]}]}, {"id": "sat", "day": "Saturday", "title": "Common Factors & Variables", "description": "The reverse of expanding! Take out the highest common factor.", "tip": "Factorisation: Find the Highest Common Factor (HCF) of numbers and letters, put it outside the bracket.", "badge": "\ud83e\udde9 Factor Ninja", "questions": [{"id": "sat_1", "prompt": "Factorise completely:", "expression": "6x + 18", "options": ["6(x + 3)", "3(2x + 6)", "2(3x + 9)", "6(x + 18)"], "correct": "6(x + 3)", "steps": ["Find the HCF of 6 and 18: HCF is 6.", "Divide each term by 6:", "6x \u00f7 6 = x", "18 \u00f7 6 = 3", "Result: 6(x + 3)"]}, {"id": "sat_2", "prompt": "Factorise completely:", "expression": "5a + 20", "options": ["5(a + 4)", "5(a + 20)", "a(5 + 20)", "10(0.5a + 2)"], "correct": "5(a + 4)", "steps": ["HCF of 5 and 20 is 5.", "5a \u00f7 5 = a", "20 \u00f7 5 = 4", "Result: 5(a + 4)"]}, {"id": "sat_3", "prompt": "Factorise completely:", "expression": "8y - 16", "options": ["8(y - 2)", "8(y - 16)", "4(2y - 4)", "2(4y - 8)"], "correct": "8(y - 2)", "steps": ["HCF of 8 and 16 is 8.", "8y \u00f7 8 = y", "-16 \u00f7 8 = -2", "Result: 8(y - 2)"]}, {"id": "sat_4", "prompt": "Factorise completely:", "expression": "9b + 27", "options": ["9(b + 3)", "3(3b + 9)", "9(b + 27)", "b(9 + 27)"], "correct": "9(b + 3)", "steps": ["HCF of 9 and 27 is 9.", "9b \u00f7 9 = b", "27 \u00f7 9 = 3", "Result: 9(b + 3)"]}, {"id": "sat_5", "prompt": "Factorise completely:", "expression": "12m - 24", "options": ["12(m - 2)", "6(2m - 4)", "4(3m - 6)", "12(m - 24)"], "correct": "12(m - 2)", "steps": ["HCF of 12 and 24 is 12.", "12m \u00f7 12 = m", "-24 \u00f7 12 = -2", "Result: 12(m - 2)"]}, {"id": "sat_6", "prompt": "Factorise (Common factor with variables):", "expression": "6x\u00b2 + 12x", "options": ["6x(x + 2)", "6(x\u00b2 + 2x)", "x(6x + 12)", "3x(2x + 4)"], "correct": "6x(x + 2)", "steps": ["HCF of numbers (6, 12) = 6.", "Common variable factor = x.", "Greatest common factor = 6x.", "6x\u00b2 \u00f7 6x = x", "12x \u00f7 6x = 2", "Result: 6x(x + 2)"]}, {"id": "sat_7", "prompt": "Factorise (Common factor with variables):", "expression": "15a\u00b2 + 10a", "options": ["5a(3a + 2)", "5(3a\u00b2 + 2a)", "a(15a + 10)", "5a(3a + 10)"], "correct": "5a(3a + 2)", "steps": ["HCF of 15 and 10 is 5.", "Common variable is a \u2192 factor out 5a.", "15a\u00b2 \u00f7 5a = 3a", "10a \u00f7 5a = 2", "Result: 5a(3a + 2)"]}, {"id": "sat_8", "prompt": "Factorise (Common factor with variables):", "expression": "20y\u00b2 - 5y", "options": ["5y(4y - 1)", "5y(4y - 5)", "5(4y\u00b2 - y)", "y(20y - 5)"], "correct": "5y(4y - 1)", "steps": ["HCF is 5y.", "20y\u00b2 \u00f7 5y = 4y", "-5y \u00f7 5y = -1 (Always keep -1 as the placeholder!)", "Result: 5y(4y - 1)"]}, {"id": "sat_9", "prompt": "Factorise (Common factor with variables):", "expression": "14x\u00b2 + 21x", "options": ["7x(2x + 3)", "7(2x\u00b2 + 3x)", "x(14x + 21)", "7x(2x + 21)"], "correct": "7x(2x + 3)", "steps": ["HCF of 14 and 21 is 7; common variable is x \u2192 7x.", "14x\u00b2 \u00f7 7x = 2x", "21x \u00f7 7x = 3", "Result: 7x(2x + 3)"]}, {"id": "sat_10", "prompt": "Factorise (Common factor with variables):", "expression": "18m\u00b2 - 12m", "options": ["6m(3m - 2)", "6(3m\u00b2 - 2m)", "3m(6m - 4)", "6m(3m - 12)"], "correct": "6m(3m - 2)", "steps": ["HCF of 18 and 12 is 6; common variable is m \u2192 6m.", "18m\u00b2 \u00f7 6m = 3m", "-12m \u00f7 6m = -2", "Result: 6m(3m - 2)"]}]}, {"id": "sun", "day": "Sunday", "title": "Day 8 \u2013 Introduction to Quadratics", "description": "Factorise quadratic trinomials: x\u00b2 + Bx + C. Find two numbers that multiply to C and add to B!", "tip": "Trinomial rule: (x + p)(x + q) where p \u00d7 q = C and p + q = B.", "badge": "\ud83d\udc51 Quadratic Royalty", "questions": [{"id": "sun_1", "prompt": "Factorise the quadratic:", "expression": "x\u00b2 + 7x + 12", "options": ["(x + 3)(x + 4)", "(x + 2)(x + 6)", "(x + 1)(x + 12)", "(x + 7)(x + 12)"], "correct": "(x + 3)(x + 4)", "steps": ["Find two numbers that multiply to 12 and add to 7.", "Factors of 12: 1\u00d712 (sum 13), 2\u00d76 (sum 8), 3\u00d74 (sum 7).", "The matching pair is 3 and 4.", "Result: (x + 3)(x + 4)"]}, {"id": "sun_2", "prompt": "Factorise the quadratic:", "expression": "x\u00b2 + 8x + 15", "options": ["(x + 3)(x + 5)", "(x + 1)(x + 15)", "(x + 2)(x + 6)", "(x + 4)(x + 4)"], "correct": "(x + 3)(x + 5)", "steps": ["Multiply to 15, add to 8.", "Factors of 15: 1\u00d715 (sum 16), 3\u00d75 (sum 8).", "The matching pair is 3 and 5.", "Result: (x + 3)(x + 5)"]}, {"id": "sun_3", "prompt": "Factorise the quadratic:", "expression": "x\u00b2 + 9x + 20", "options": ["(x + 4)(x + 5)", "(x + 2)(x + 10)", "(x + 1)(x + 20)", "(x + 3)(x + 6)"], "correct": "(x + 4)(x + 5)", "steps": ["Multiply to 20, add to 9.", "Factors of 20: 1\u00d720, 2\u00d710 (sum 12), 4\u00d75 (sum 9).", "The matching pair is 4 and 5.", "Result: (x + 4)(x + 5)"]}, {"id": "sun_4", "prompt": "Factorise the quadratic:", "expression": "x\u00b2 + 10x + 21", "options": ["(x + 3)(x + 7)", "(x + 1)(x + 21)", "(x + 2)(x + 8)", "(x + 5)(x + 5)"], "correct": "(x + 3)(x + 7)", "steps": ["Multiply to 21, add to 10.", "Factors of 21: 1\u00d721, 3\u00d77 (sum 10).", "The matching pair is 3 and 7.", "Result: (x + 3)(x + 7)"]}, {"id": "sun_5", "prompt": "Factorise the quadratic:", "expression": "x\u00b2 + 11x + 24", "options": ["(x + 3)(x + 8)", "(x + 4)(x + 6)", "(x + 2)(x + 12)", "(x + 1)(x + 24)"], "correct": "(x + 3)(x + 8)", "steps": ["Multiply to 24, add to 11.", "Factors of 24: 1\u00d724 (sum 25), 2\u00d712 (sum 14), 4\u00d76 (sum 10), 3\u00d78 (sum 11).", "The matching pair is 3 and 8.", "Result: (x + 3)(x + 8)"]}, {"id": "sun_6", "prompt": "Harder Quadratic (with negatives):", "expression": "x\u00b2 - x - 12", "options": ["(x - 4)(x + 3)", "(x + 4)(x - 3)", "(x - 6)(x + 2)", "(x - 12)(x + 1)"], "correct": "(x - 4)(x + 3)", "steps": ["Multiply to -12, add to -1.", "Pairs for -12: (-6, 2) sum -4; (-4, 3) sum -1.", "The matching numbers are -4 and +3.", "Result: (x - 4)(x + 3)"]}, {"id": "sun_7", "prompt": "Harder Quadratic (with negatives):", "expression": "x\u00b2 - 5x + 6", "options": ["(x - 2)(x - 3)", "(x + 2)(x + 3)", "(x - 1)(x - 6)", "(x - 5)(x + 1)"], "correct": "(x - 2)(x - 3)", "steps": ["Multiply to +6, add to -5.", "Since product is positive and sum is negative, both numbers are negative!", "Pairs: (-1, -6) sum -7; (-2, -3) sum -5.", "Result: (x - 2)(x - 3)"]}, {"id": "sun_8", "prompt": "Harder Quadratic (with negatives):", "expression": "x\u00b2 - 7x + 12", "options": ["(x - 3)(x - 4)", "(x + 3)(x + 4)", "(x - 2)(x - 6)", "(x - 1)(x - 12)"], "correct": "(x - 3)(x - 4)", "steps": ["Multiply to +12, add to -7.", "Both numbers negative: (-3) \u00d7 (-4) = +12, (-3) + (-4) = -7.", "Result: (x - 3)(x - 4)"]}, {"id": "sun_9", "prompt": "Harder Quadratic (with negatives):", "expression": "x\u00b2 + x - 20", "options": ["(x + 5)(x - 4)", "(x - 5)(x + 4)", "(x + 10)(x - 2)", "(x - 20)(x + 1)"], "correct": "(x + 5)(x - 4)", "steps": ["Multiply to -20, add to +1.", "Pairs for -20: (+5) \u00d7 (-4) = -20 and (+5) + (-4) = +1.", "Result: (x + 5)(x - 4)"]}, {"id": "sun_10", "prompt": "Harder Quadratic (with negatives):", "expression": "x\u00b2 - 2x - 15", "options": ["(x - 5)(x + 3)", "(x + 5)(x - 3)", "(x - 15)(x + 1)", "(x - 1)(x + 15)"], "correct": "(x - 5)(x + 3)", "steps": ["Multiply to -15, add to -2.", "Pairs for -15: (-5) \u00d7 (+3) = -15 and (-5) + (+3) = -2.", "Result: (x - 5)(x + 3)"]}]}, {"id": "extra", "day": "Extra Practice", "title": "Mastery Challenge (Expand & Factorise)", "description": "Put everything together in a comprehensive mix of expansion and factorisation!", "tip": "Notice the verb: 'Expand' means multiply out brackets; 'Factorise' means put into brackets!", "badge": "\ud83c\udfc6 Ultimate Math Champion", "questions": [{"id": "extra_1", "prompt": "Expand:", "expression": "7(x - 3)", "options": ["7x - 21", "7x - 3", "7x + 21", "x - 21"], "correct": "7x - 21", "steps": ["7 \u00d7 x = 7x", "7 \u00d7 (-3) = -21", "Result: 7x - 21"]}, {"id": "extra_2", "prompt": "Expand:", "expression": "(x + 5)(x + 2)", "options": ["x\u00b2 + 7x + 10", "x\u00b2 + 10x + 7", "x\u00b2 + 7x + 7", "x\u00b2 + 10"], "correct": "x\u00b2 + 7x + 10", "steps": ["FOIL: x\u00b2 + 2x + 5x + 10", "Combine: 2x + 5x = 7x", "Result: x\u00b2 + 7x + 10"]}, {"id": "extra_3", "prompt": "Expand:", "expression": "(x - 3)(x - 4)", "options": ["x\u00b2 - 7x + 12", "x\u00b2 - 7x - 12", "x\u00b2 + 7x + 12", "x\u00b2 - x + 12"], "correct": "x\u00b2 - 7x + 12", "steps": ["FOIL: x\u00b2 - 4x - 3x + 12", "Combine: -4x - 3x = -7x", "Result: x\u00b2 - 7x + 12"]}, {"id": "extra_4", "prompt": "Factorise completely:", "expression": "12x + 48", "options": ["12(x + 4)", "6(2x + 8)", "4(3x + 12)", "12(x + 48)"], "correct": "12(x + 4)", "steps": ["HCF of 12 and 48 is 12.", "12x \u00f7 12 = x", "48 \u00f7 12 = 4", "Result: 12(x + 4)"]}, {"id": "extra_5", "prompt": "Factorise completely:", "expression": "15x\u00b2 + 30x", "options": ["15x(x + 2)", "15(x\u00b2 + 2x)", "5x(3x + 6)", "x(15x + 30)"], "correct": "15x(x + 2)", "steps": ["HCF of 15 and 30 is 15; common variable is x \u2192 15x.", "15x\u00b2 \u00f7 15x = x", "30x \u00f7 15x = 2", "Result: 15x(x + 2)"]}, {"id": "extra_6", "prompt": "Factorise the quadratic:", "expression": "x\u00b2 + 6x + 8", "options": ["(x + 2)(x + 4)", "(x + 1)(x + 8)", "(x + 3)(x + 3)", "(x + 2)(x + 6)"], "correct": "(x + 2)(x + 4)", "steps": ["Multiply to 8, add to 6.", "Factor pair: 2 \u00d7 4 = 8, 2 + 4 = 6.", "Result: (x + 2)(x + 4)"]}, {"id": "extra_7", "prompt": "Factorise the quadratic:", "expression": "x\u00b2 - 8x + 15", "options": ["(x - 3)(x - 5)", "(x + 3)(x + 5)", "(x - 1)(x - 15)", "(x - 2)(x - 6)"], "correct": "(x - 3)(x - 5)", "steps": ["Multiply to +15, add to -8.", "Negative factor pair: (-3) \u00d7 (-5) = +15, (-3) + (-5) = -8.", "Result: (x - 3)(x - 5)"]}]}];
+
+    // User State with LocalStorage
+    let state = {
+      xp: 0,
+      gems: 50,
+      hearts: 5,
+      streak: 1,
+      completedUnits: {},
+      hasStreakFreeze: false,
+      mascotAccessory: 'none',
+      currentTheme: 'default',
+      studentName: 'Alex Smith',
+      soundEnabled: true
+    };
+
+    // Load State
+    try {
+      const saved = localStorage.getItem('duomath_algebra_state');
+      if (saved) {
+        state = Object.assign(state, JSON.parse(saved));
+      }
+    } catch (e) {
+      console.log('Using default state');
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('duomath_algebra_state', JSON.stringify(state));
+      } catch (e) {}
+      renderTopBar();
+    }
+
+    // Audio Engine (Web Audio API Synthesizer)
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) audioCtx = new AudioContext();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq, type, duration, delay = 0) {
+      if (!state.soundEnabled) return;
+      initAudio();
+      if (!audioCtx) return;
+      setTimeout(() => {
+        try {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        } catch(e) {}
+      }, delay);
+    }
+
+    function playSound(name) {
+      if (!state.soundEnabled) return;
+      if (name === 'correct') {
+        playTone(523.25, 'triangle', 0.15, 0); // C5
+        playTone(659.25, 'triangle', 0.25, 120); // E5
+        playTone(783.99, 'triangle', 0.35, 240); // G5
+      } else if (name === 'wrong') {
+        playTone(220, 'sawtooth', 0.2, 0);
+        playTone(185, 'sawtooth', 0.3, 150);
+      } else if (name === 'pop') {
+        playTone(400, 'sine', 0.08, 0);
+      } else if (name === 'fanfare') {
+        playTone(523.25, 'triangle', 0.15, 0);
+        playTone(659.25, 'triangle', 0.15, 150);
+        playTone(783.99, 'triangle', 0.25, 300);
+        playTone(1046.50, 'triangle', 0.45, 450);
+      }
+    }
+
+    function toggleAudio() {
+      state.soundEnabled = !state.soundEnabled;
+      document.getElementById('audioToggleBtn').innerText = state.soundEnabled ? '🔊' : '🔇';
+      showToast(state.soundEnabled ? 'Sound Enabled' : 'Sound Muted');
+      saveState();
+    }
+
+    // State Rendering
+    function renderTopBar() {
+      document.getElementById('streakCount').innerText = state.streak;
+      document.getElementById('gemCount').innerText = state.gems;
+      document.getElementById('heartCount').innerText = state.hearts;
+      document.getElementById('xpCount').innerText = state.xp;
+      document.getElementById('audioToggleBtn').innerText = state.soundEnabled ? '🔊' : '🔇';
+
+      if (state.currentTheme === 'cyber') {
+        document.body.setAttribute('data-theme', 'cyber');
+      } else if (state.currentTheme === 'royal') {
+        document.body.setAttribute('data-theme', 'royal');
+      } else {
+        document.body.removeAttribute('data-theme');
+      }
+    }
+
+    // Render Unit Map
+    function renderPathMap() {
+      const container = document.getElementById('unitPathContainer');
+      container.innerHTML = '';
+
+      CURRICULUM.forEach((unit, idx) => {
+        const isCompleted = !!state.completedUnits[unit.id];
+
+        const node = document.createElement('div');
+        node.className = 'unit-node-wrapper';
+
+        node.innerHTML = `
+          <div class="unit-card ${isCompleted ? 'completed' : ''}" onclick="startLesson('${unit.id}')">
+            <div class="unit-badge-icon">
+              ${isCompleted ? '⭐' : unit.badge.split(' ')[0]}
+            </div>
+            <div class="unit-info">
+              <div class="unit-day">${unit.day}</div>
+              <div class="unit-title">${unit.title}</div>
+              <div class="unit-desc">${unit.description}</div>
+            </div>
+            <div class="unit-status">
+              ${isCompleted ? 'Mastered ✓' : 'Start'}
+            </div>
+          </div>
+          ${unit.hasChallenge ? `
+            <div class="challenge-banner" onclick="event.stopPropagation(); openChallengeModal();">
+              <div>
+                <strong>✨ Monday Challenge:</strong> Create your own custom problems!
+              </div>
+              <button class="nav-btn" style="background: white; border: none; color: #ff5722; font-weight: 900;">
+                Try It
+              </button>
+            </div>
+          ` : ''}
+        `;
+
+        container.appendChild(node);
+
+        if (idx < CURRICULUM.length - 1) {
+          const connector = document.createElement('div');
+          connector.className = 'path-connector';
+          container.appendChild(connector);
+        }
+      });
+    }
+
+    // Active Lesson Flow
+    let currentUnit = null;
+    let currentQuestionIdx = 0;
+    let selectedOption = null;
+    let lessonHearts = 5;
+    let lessonXPBonus = 0;
+
+    function startLesson(unitId) {
+      if (state.hearts <= 0) {
+        showToast('Out of hearts! Refill in the Shop or wait.');
+        openShopModal();
+        return;
+      }
+
+      currentUnit = CURRICULUM.find(u => u.id === unitId);
+      if (!currentUnit) return;
+
+      currentQuestionIdx = 0;
+      lessonHearts = state.hearts;
+      lessonXPBonus = 0;
+
+      showScreen('lessonScreen');
+      loadQuestion();
+      playSound('pop');
+    }
+
+    function loadQuestion() {
+      const q = currentUnit.questions[currentQuestionIdx];
+      selectedOption = null;
+
+      // Update Header
+      const progressPercent = (currentQuestionIdx / currentUnit.questions.length) * 100;
+      document.getElementById('lessonProgressBar').style.width = progressPercent + '%';
+      document.getElementById('lessonHeartCount').innerText = lessonHearts;
+
+      // Update Mascot
+      const mascot = document.getElementById('mascotReaction');
+      mascot.innerText = state.mascotAccessory === 'glasses' ? '😎' : '🦉';
+      document.getElementById('mascotSpeech').innerText = `Question ${currentQuestionIdx + 1} of ${currentUnit.questions.length}: Let's solve it!`;
+
+      // Pedagogical Tip Box
+      const tipBox = document.getElementById('pedagogicalTipBox');
+      const tipText = document.getElementById('pedagogicalTipText');
+      if (currentUnit.tip) {
+        tipBox.style.display = 'flex';
+        tipText.innerText = currentUnit.tip;
+      } else {
+        tipBox.style.display = 'none';
+      }
+
+      // Expression & Prompt
+      document.getElementById('questionPrompt').innerText = q.prompt;
+      document.getElementById('questionExpression').innerText = q.expression;
+
+      // Options
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+
+      // Shuffle options for variety
+      const shuffled = [...q.options].sort(() => 0.5 - Math.random());
+
+      shuffled.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => selectOption(opt, btn);
+        grid.appendChild(btn);
+      });
+
+      // Reset Footer
+      document.getElementById('checkBtn').disabled = true;
+      document.getElementById('feedbackBanner').className = 'feedback-banner';
+    }
+
+    function selectOption(opt, btnElement) {
+      selectedOption = opt;
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      btnElement.classList.add('selected');
+      document.getElementById('checkBtn').disabled = false;
+      playSound('pop');
+    }
+
+    function checkSelectedAnswer() {
+      if (!selectedOption) return;
+
+      const q = currentUnit.questions[currentQuestionIdx];
+      const banner = document.getElementById('feedbackBanner');
+      const title = document.getElementById('feedbackTitle');
+      const desc = document.getElementById('feedbackDesc');
+      const mascot = document.getElementById('mascotReaction');
+      const helpBtn = document.getElementById('feedbackHelpBtn');
+
+      if (selectedOption === q.correct) {
+        // Correct
+        banner.className = 'feedback-banner correct';
+        title.innerText = 'Nicely done! +10 XP';
+        desc.innerText = 'Spot on! You expanded or factorised accurately.';
+        mascot.innerText = '🎉';
+        helpBtn.style.display = 'none';
+        playSound('correct');
+
+        state.xp += 10;
+        lessonXPBonus += 10;
+        saveState();
+      } else {
+        // Incorrect
+        banner.className = 'feedback-banner incorrect';
+        title.innerText = 'Not quite right!';
+        desc.innerText = `Correct answer is: ${q.correct}`;
+        mascot.innerText = '😢';
+        helpBtn.style.display = 'inline-block';
+        playSound('wrong');
+
+        lessonHearts--;
+        state.hearts = Math.max(0, lessonHearts);
+        document.getElementById('lessonHeartCount').innerText = lessonHearts;
+        saveState();
+
+        if (lessonHearts <= 0) {
+          showToast('You ran out of hearts!');
+        }
+      }
+    }
+
+    function nextQuestion() {
+      document.getElementById('feedbackBanner').className = 'feedback-banner';
+
+      if (lessonHearts <= 0) {
+        showToast('Lesson ended. Refill hearts in the shop to continue!');
+        showScreen('pathScreen');
+        openShopModal();
+        return;
+      }
+
+      currentQuestionIdx++;
+      if (currentQuestionIdx >= currentUnit.questions.length) {
+        // Completed Unit!
+        finishLesson();
+      } else {
+        loadQuestion();
+      }
+    }
+
+    function finishLesson() {
+      state.completedUnits[currentUnit.id] = true;
+      state.xp += 50; // Unit completion bonus
+      state.gems += 10; // Earn gems
+      state.streak += 1;
+      saveState();
+
+      playSound('fanfare');
+      fireConfetti();
+
+      showToast(`🏆 ${currentUnit.title} Mastered! +50 XP, +10 Gems!`);
+      showScreen('pathScreen');
+      renderPathMap();
+    }
+
+    function quitLesson() {
+      if (confirm('Are you sure you want to exit? Your lesson progress will be lost.')) {
+        showScreen('pathScreen');
+      }
+    }
+
+    // Explanation Modal
+    function showCurrentExplanation() {
+      const q = currentUnit.questions[currentQuestionIdx];
+      document.getElementById('modalProblemExpr').innerText = q.expression;
+
+      const list = document.getElementById('modalStepList');
+      list.innerHTML = '';
+
+      q.steps.forEach(step => {
+        const item = document.createElement('div');
+        item.className = 'step-item';
+        item.innerText = step;
+        list.appendChild(item);
+      });
+
+      document.getElementById('explanationModal').classList.add('active');
+      playSound('pop');
+    }
+
+    function closeExplanationModal() {
+      document.getElementById('explanationModal').classList.remove('active');
+    }
+
+    // Monday Challenge Playground
+    function openChallengeModal() {
+      document.getElementById('challengeModal').classList.add('active');
+      solveCustomExample();
+    }
+
+    function closeChallengeModal() {
+      document.getElementById('challengeModal').classList.remove('active');
+    }
+
+    function solveCustomExample() {
+      const k = parseInt(document.getElementById('customK').value) || 0;
+      const a = parseInt(document.getElementById('customA').value) || 0;
+      const b = parseInt(document.getElementById('customB').value) || 0;
+
+      const term1Coeff = k * a;
+      const term2 = k * b;
+      const sign = term2 >= 0 ? '+ ' : '- ';
+      const absTerm2 = Math.abs(term2);
+
+      const expanded = `${term1Coeff}x ${sign}${absTerm2}`;
+      document.getElementById('customExpandedExpr').innerText = expanded;
+
+      const list = document.getElementById('customStepList');
+      list.innerHTML = `
+        <div class="step-item">Problem: ${k}(${a}x + ${b})</div>
+        <div class="step-item">Step 1: Multiply outside number by first term → ${k} × ${a}x = ${term1Coeff}x</div>
+        <div class="step-item">Step 2: Multiply outside number by second term → ${k} × ${b} = ${term2 >= 0 ? '+' : ''}${term2}</div>
+        <div class="step-item">Final Answer: <strong>${expanded}</strong></div>
+      `;
+
+      document.getElementById('customResultArea').style.display = 'block';
+      playSound('pop');
+    }
+
+    // Shop & Badges
+    function openShopModal() {
+      renderBadges();
+      document.getElementById('shopModal').classList.add('active');
+      playSound('pop');
+    }
+
+    function closeShopModal() {
+      document.getElementById('shopModal').classList.remove('active');
+    }
+
+    function buyHeartRefill() {
+      if (state.gems < 20) {
+        showToast('Not enough gems! Complete lessons to earn more.');
+        return;
+      }
+      state.gems -= 20;
+      state.hearts = 5;
+      saveState();
+      playSound('correct');
+      showToast('Hearts refilled to 5! ❤️');
+      closeShopModal();
+    }
+
+    function buyStreakFreeze() {
+      if (state.gems < 30) {
+        showToast('Not enough gems!');
+        return;
+      }
+      if (state.hasStreakFreeze) {
+        showToast('You already have an active Streak Freeze!');
+        return;
+      }
+      state.gems -= 30;
+      state.hasStreakFreeze = true;
+      saveState();
+      playSound('correct');
+      showToast('Streak Freeze Activated! 🛡️');
+      closeShopModal();
+    }
+
+    function toggleMascotAccessory(type) {
+      if (state.mascotAccessory === type) {
+        state.mascotAccessory = 'none';
+        showToast('Normal Owl restored.');
+      } else {
+        if (state.gems < 15) {
+          showToast('Not enough gems!');
+          return;
+        }
+        state.gems -= 15;
+        state.mascotAccessory = type;
+        showToast('Cool Shades equipped! 😎');
+        playSound('correct');
+      }
+      saveState();
+    }
+
+    function toggleTheme(theme) {
+      if (state.currentTheme === theme) {
+        state.currentTheme = 'default';
+        showToast('Default theme restored.');
+      } else {
+        if (state.gems < 25) {
+          showToast('Not enough gems!');
+          return;
+        }
+        state.gems -= 25;
+        state.currentTheme = theme;
+        showToast('Theme updated!');
+        playSound('correct');
+      }
+      saveState();
+    }
+
+    function renderBadges() {
+      const container = document.getElementById('badgeContainer');
+      container.innerHTML = '';
+
+      CURRICULUM.forEach(unit => {
+        const unlocked = !!state.completedUnits[unit.id];
+        const [emoji, ...titleParts] = unit.badge.split(' ');
+        const name = titleParts.join(' ');
+
+        const card = document.createElement('div');
+        card.className = `badge-card ${unlocked ? 'unlocked' : ''}`;
+        card.innerHTML = `
+          <div class="badge-emoji">${emoji}</div>
+          <div class="badge-name">${name}</div>
+          <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">
+            ${unlocked ? 'Unlocked!' : 'Complete ' + unit.day}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Certificate View
+    function openCertificateModal() {
+      document.getElementById('studentNameInput').value = state.studentName;
+      updateCertName();
+      document.getElementById('certXP').innerText = state.xp;
+      document.getElementById('certStreak').innerText = `${state.streak} Days`;
+      const completedCount = Object.keys(state.completedUnits).length;
+      document.getElementById('certCompleted').innerText = `${completedCount}/${CURRICULUM.length}`;
+
+      document.getElementById('certModal').classList.add('active');
+      playSound('pop');
+    }
+
+    function closeCertModal() {
+      document.getElementById('certModal').classList.remove('active');
+    }
+
+    function updateCertName() {
+      const name = document.getElementById('studentNameInput').value || 'Alex Smith';
+      state.studentName = name;
+      document.getElementById('certStudentName').innerText = name;
+      saveState();
+    }
+
+    // Screen Navigation
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    // Toast Notification
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3000);
+    }
+
+    // Confetti Animation Engine
+    function fireConfetti() {
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#58cc02', '#1cb0f6', '#ffc800', '#ff4b4b', '#ce82ff'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10,
+          life: 100
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+
+        particles.forEach(p => {
+          if (p.life > 0) {
+            alive = true;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.35; // gravity
+            p.rotation += p.vRot;
+            p.life--;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+
+        if (alive) requestAnimationFrame(render);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      render();
+    }
+
+    // Initialize App
+    window.addEventListener('DOMContentLoaded', () => {
+      renderTopBar();
+      renderPathMap();
+    });
+  </script>
+</body>
+</html>
